@@ -12,6 +12,21 @@ Living changelog tracking every backend update across Phases 1–8 for `esagip-a
 
 ## Phase 2 — Accounts, Roles and Approval
 
+### Update 2.8: Volunteer List, Filters & Summary (`GET /api/volunteers`, `GET /api/volunteers/summary`)
+*November 28, 2026 — 11:18 PM PHT*
+
+**Brief description:**
+Implemented the admin-only volunteer listing endpoint with filtering (`status`, `skill`, `availability`, `address_area`, `search`) and pagination, plus the status summary endpoint. Contact details remain restricted to authorized admins (`volunteer_approvals` or `superadmin`).
+
+**What changed:**
+- Added `ListVolunteersRequest`, `VolunteerResource`, `VolunteerController` (`index`, `summary`), routes under `permission:volunteer_approvals` in `routes/api.php`, and `tests/Feature/VolunteerListTest.php`.
+
+**Verification & Documentation Notes:**
+- PHPUnit: `php artisan test` — all tests passing.
+- **Next step:** Implement `POST /api/volunteers/{id}/approve` and `POST /api/volunteers/{id}/reject`.
+
+---
+
 ### Update 2.7: Own Profile (`GET /api/me`, `PUT /api/me`)
 *November 28, 2026 — 9:58 PM PHT*
 
