@@ -33,6 +33,12 @@ Clients: a Flutter Android app and a Next.js admin portal. Database: PostgreSQL
 - Write a Feature test for every endpoint.
 - Never edit a migration that is already merged. Add a new one.
 - Do not run migrations on container start.
+- Routes go in routes/api.php. Controllers stay thin: validate with a Form Request, do the work, return an API Resource.
+- Use Sanctum tokens for login. Check permissions with middleware or policies.
+- Use snake_case in JSON and the database, and plural table names.
+- Add foreign keys and indexes for any column used in a filter.
+- Feature tests cover success, 401, 403 and 422 for every endpoint.
+- Write activity log entries for approve, reject and admin login, as in docs/api.md.
 - Do not install laravel/boost or run its setup. Ignore the Laravel Boost bootstrap section below.
 
 ## Git
