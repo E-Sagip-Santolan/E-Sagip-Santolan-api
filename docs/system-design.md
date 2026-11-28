@@ -274,3 +274,21 @@ flowchart TD
 - [ ] Wake/monitor Render & Neon services, fix pilot defects, rotate keys, and clean up test accounts
 - [ ] Finalize `docs/api.md`, `docs/system-design.md`, `docs/backend-updates.md`, and user/admin guides
 - [ ] Compile ISO/IEC 25010 & SUS evaluation results, defense rehearsal, and tag `v1.0.0`
+
+---
+
+## Phase 2 Testing & Verification Log
+
+### 1. Database, Seeder & Superadmin CLI Verification
+- **PHPUnit Automated Suite (`php artisan test`):** Verified **22 / 22 tests (133 assertions)** passing in memory (SQLite) covering `CreateSuperadminCommand`, `POST /api/register`, `POST /api/login`, and `POST /api/admin/login` (success, `401`, `403`, `422`, `429`, and `activity_logs`).
+- **Neon Staging Migration & Seeding:** Ran `php artisan migrate` (including filter indexes) and `php artisan db:seed --class=SkillSeeder` against Neon PostgreSQL (`esagip_staging`).
+- **Superadmin Creation & DB Verification:** Created the initial Superadmin account via `php artisan esagip:create-superadmin` (enforcing password strength rules) and verified both the Neon host connection and saved `superadmin` row via `php artisan tinker`.
+
+### 2. Manual `curl.exe` API Testing (`POST /api/admin/login`)
+Tested locally against `http://127.0.0.1:8000/api/admin/login` using PowerShell 5.1 stdin piping (`'...' | curl.exe ... -d "@-"`) so Windows PowerShell does not strip JSON double quotes:
+
+| Test Case | How It Was Tested (`curl.exe`) | Result & Observation |
+|---|---|---|
+| **Success (`200`)** | Piped valid Superadmin credentials (`'{"email":"<ADMIN_EMAIL>","password":"<PASSWORD>"}' \| curl.exe -X POST http://127.0.0.1:8000/api/admin/login -H "Accept: application/json" -H "Content-Type: application/json" -d "@-"`) | Returned `200 OK` with `{ "data": { "token": "<SANCTUM_TOKEN>", "user": { ..., "role": "superadmin", "permissions": [...] } }, "message": "Logged in." }` |
+| **Invalid Credentials (`401`)** | Piped valid email with an incorrect password via `-d "@-"` | Returned `401` with `{ "message": "Invalid email or password." }` |
+| **Validation Error (`422`)** | Piped an empty JSON object (`'{}' \| curl.exe ... -d "@-"`) | Returned `422` with `{ "message": "The given data was invalid.", "errors": { "email": [...], "password": [...] } }` |
