@@ -1,3 +1,51 @@
+# E-Sagip API: project rules
+
+Read @docs/context.md and @docs/api.md before starting any task.
+
+## What this repo is
+Laravel REST API for E-Sagip, a volunteer management system for Barangay Santolan.
+Clients: a Flutter Android app and a Next.js admin portal. Database: PostgreSQL
+(local) and Neon (live). Deployed on Render with Docker.
+
+## Source of truth
+- docs/api.md defines every endpoint and JSON shape. Follow it exactly.
+- If a shape must change, update docs/api.md in the same change and tell me.
+- Success: { data, message }. Errors: { message, errors }. Never return a stack trace.
+- Table design comes from docs/erd.dbml when it exists. Do not invent tables or columns.
+
+## Security (this repo is PUBLIC)
+- Never read, print, copy or commit values from .env, or any key, token or Neon string.
+- Only use placeholders in examples. Use dummy data only.
+- Check permissions on the server (middleware or policies), never only in the frontend.
+- Hash passwords. Never log passwords or tokens.
+
+## How to work with me
+- Plan first: list the files you will change and the permission checks, then wait for my approval.
+- One endpoint per task. Small steps.
+- Beginner-friendly code with short comments. Explain every command before I run it.
+- Do not add packages without asking.
+- After each change, give me curl commands to test success, 401, 403 and 422.
+- Do not run git commit, git push or migrations unless I ask. I do those myself.
+
+## Code rules
+- PHP 8.3 compatible code only (composer platform is 8.3.0).
+- Validate with Form Request classes. Return models through API Resource classes.
+- Write a Feature test for every endpoint.
+- Never edit a migration that is already merged. Add a new one.
+- Do not run migrations on container start.
+- Routes go in routes/api.php. Controllers stay thin: validate with a Form Request, do the work, return an API Resource.
+- Use Sanctum tokens for login. Check permissions with middleware or policies.
+- Use snake_case in JSON and the database, and plural table names.
+- Add foreign keys and indexes for any column used in a filter.
+- Feature tests cover success, 401, 403 and 422 for every endpoint.
+- Write activity log entries for approve, reject and admin login, as in docs/api.md.
+- Do not install laravel/boost or run its setup. Ignore the Laravel Boost bootstrap section below.
+
+## Git
+- Work on a feature branch, never on main. main is protected and needs a pull request.
+
+## Out of scope for Phase 2
+Operations, attendance, community, reports, dashboard, settings and the chatbot.
 <laravel-boost-guidelines>
 # Laravel Application
 
