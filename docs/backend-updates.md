@@ -12,6 +12,21 @@ Living changelog tracking every backend update across Phases 1–8 for `esagip-a
 
 ## Phase 2 — Accounts, Roles and Approval
 
+### Update 2.9: Volunteer Approve & Reject (`POST /api/volunteers/{id}/approve`, `POST /api/volunteers/{id}/reject`)
+*November 28, 2026 — 11:31 PM PHT*
+
+**Brief description:**
+Implemented volunteer approval and rejection endpoints (optional `reason`, pending-only guard, and `activity_logs` recording with IP address).
+
+**What changed:**
+- Added `RejectVolunteerRequest`, `VolunteerController::approve()` and `VolunteerController::reject()`, routes under `permission:volunteer_approvals` in `routes/api.php`, and `tests/Feature/VolunteerApprovalTest.php`.
+
+**Verification & Documentation Notes:**
+- PHPUnit: `php artisan test` — all tests passing.
+- **Next step:** Implement Superadmin-only admin management (`GET /api/admins`, `POST /api/admins`, `PUT /api/admins/{id}`).
+
+---
+
 ### Update 2.8: Volunteer List, Filters & Summary (`GET /api/volunteers`, `GET /api/volunteers/summary`)
 *November 28, 2026 — 11:18 PM PHT*
 

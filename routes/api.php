@@ -32,5 +32,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::middleware('permission:volunteer_approvals')->group(function () {
         Route::get('/volunteers', [VolunteerController::class, 'index']);
         Route::get('/volunteers/summary', [VolunteerController::class, 'summary']);
+        Route::post('/volunteers/{id}/approve', [VolunteerController::class, 'approve']);
+        Route::post('/volunteers/{id}/reject', [VolunteerController::class, 'reject']);
     });
 });

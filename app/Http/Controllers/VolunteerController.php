@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ListVolunteersRequest;
+use App\Http\Requests\RejectVolunteerRequest;
 use App\Http\Resources\VolunteerResource;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class VolunteerController extends Controller
@@ -86,6 +89,98 @@ class VolunteerController extends Controller
                 'rejected' => $rejected,
             ],
             'message' => 'OK',
+        ], 200);
+    }
+
+    /**
+     * Approve a pending volunteer and record the action in activity_logs.
+     */
+    public function approve(Request $request, int $id): JsonResponse
+    {
+        $volunteer = User::where('role', User::ROLE_VOLUNTEER)->find($id);
+
+        if (! $volunteer) {
+            return response()->json(['message' => 'Not found.'], 404);
+        }
+
+        if ($volunteer->status !== User::STATUS_PENDING) {
+            return response()->json([
+                'message' => 'Only pending volunteers can be approved.',
+                'errors' => ['status' => ["Volunteer is already {$volunteer->status}."]],
+            ], 422);
+        }
+
+        DB::transaction(function () use ($request, $volunteer) {
+            $volunteer->update([
+                'status' => User::STATUS_APPROVED,
+                'approved_by' => $request->user()->id,
+                'approved_at' => now(),
+                'rejection_reason' => null,
+            ]);
+
+            ActivityLog::record(
+                $request->user()->id,
+                'volunteer_approved',
+                'volunteers',
+                "Approved volunteer #{$volunteer->id} ({$volunteer->email}).",
+                $request->ip(),
+            );
+        });
+
+        $volunteer->refresh()->load(['volunteerProfile', 'skills']);
+
+        return response()->json([
+            'data' => new VolunteerResource($volunteer),
+            'message' => 'Volunteer approved.',
+        ], 200);
+    }
+
+    /**
+     * Reject a pending volunteer (reason optional) and record the action in activity_logs.
+     */
+    public function reject(RejectVolunteerRequest $request, int $id): JsonResponse
+    {
+        $volunteer = User::where('role', User::ROLE_VOLUNTEER)->find($id);
+
+        if (! $volunteer) {
+            return response()->json(['message' => 'Not found.'], 404);
+        }
+
+        if ($volunteer->status !== User::STATUS_PENDING) {
+            return response()->json([
+                'message' => 'Only pending volunteers can be rejected.',
+                'errors' => ['status' => ["Volunteer is already {$volunteer->status}."]],
+            ], 422);
+        }
+
+        $reason = $request->validated('reason');
+        $reason = is_string($reason) && trim($reason) !== '' ? trim($reason) : null;
+
+        DB::transaction(function () use ($request, $volunteer, $reason) {
+            $volunteer->update([
+                'status' => User::STATUS_REJECTED,
+                'rejection_reason' => $reason,
+            ]);
+
+            $details = "Rejected volunteer #{$volunteer->id} ({$volunteer->email}).";
+            if ($reason !== null) {
+                $details .= " Reason: {$reason}";
+            }
+
+            ActivityLog::record(
+                $request->user()->id,
+                'volunteer_rejected',
+                'volunteers',
+                $details,
+                $request->ip(),
+            );
+        });
+
+        $volunteer->refresh()->load(['volunteerProfile', 'skills']);
+
+        return response()->json([
+            'data' => new VolunteerResource($volunteer),
+            'message' => 'Volunteer rejected.',
         ], 200);
     }
 }
