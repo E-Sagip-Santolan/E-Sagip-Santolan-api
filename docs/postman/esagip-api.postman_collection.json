@@ -1,15 +1,16 @@
 {
   "info": {
     "name": "E-Sagip API (Phase 2)",
-    "description": "Phase 2 REST API collection for E-Sagip (Barangay Santolan). Uses {{base_url}} and {{token}} variables. All sample bodies use dummy data from docs/api.md.",
+    "description": "Phase 2 REST API collection for E-Sagip (Barangay Santolan), divided into Mobile App and Web Admin Portal folders. Overlapping endpoints are labeled (mobile and web). Uses {{base_url}} and {{token}} variables with dummy data from docs/api.md.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Health",
+      "name": "Mobile App",
+      "description": "Endpoints used by the Flutter Android volunteer app.",
       "item": [
         {
-          "name": "Health Check",
+          "name": "Health Check (mobile and web)",
           "request": {
             "method": "GET",
             "header": [
@@ -30,12 +31,30 @@
             "description": "Public smoke-test endpoint to verify the API is up."
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "Auth",
-      "item": [
+        },
+        {
+          "name": "List Skills (mobile and web)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/skills",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "skills"
+              ]
+            },
+            "description": "Public. Lists all available skills for registration and profile editing."
+          },
+          "response": []
+        },
         {
           "name": "Register Volunteer",
           "event": [
@@ -131,6 +150,178 @@
           "response": []
         },
         {
+          "name": "Logout (mobile and web)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('token', '');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            },
+            "description": "Any authenticated user. Revokes the current Sanctum token and clears {{token}}."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Own Profile (mobile and web)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "Any authenticated user. Returns the logged-in user and volunteer profile."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Own Profile (mobile and web)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan D. Cruz\",\n  \"contact_number\": \"09179876543\",\n  \"address_area\": \"Zone 2, Tawiran St., Santolan\",\n  \"availability\": \"unavailable\",\n  \"training\": \"Red Cross Basic First Aid (2025), BDRRMC Orientation\",\n  \"skills\": [1, 2]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "Any authenticated user. Updates only the fields sent."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Web Admin Portal",
+      "description": "Endpoints used by the Next.js BDRRMC admin portal.",
+      "item": [
+        {
+          "name": "Health Check (mobile and web)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Public smoke-test endpoint to verify the API is up."
+          },
+          "response": []
+        },
+        {
+          "name": "List Skills (mobile and web)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/skills",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "skills"
+              ]
+            },
+            "description": "Public. Lists all available skills."
+          },
+          "response": []
+        },
+        {
           "name": "Admin Login",
           "event": [
             {
@@ -179,7 +370,7 @@
           "response": []
         },
         {
-          "name": "Logout",
+          "name": "Logout (mobile and web)",
           "event": [
             {
               "listen": "test",
@@ -223,37 +414,9 @@
             "description": "Any authenticated user. Revokes the current Sanctum token and clears {{token}}."
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "Profile & Skills",
-      "item": [
-        {
-          "name": "List Skills",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/skills",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "skills"
-              ]
-            },
-            "description": "Public. Lists all available skills for registration and profile editing."
-          },
-          "response": []
         },
         {
-          "name": "Get Own Profile",
+          "name": "Get Own Profile (mobile and web)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -281,12 +444,12 @@
                 "me"
               ]
             },
-            "description": "Any authenticated user. Returns the logged-in user and volunteer profile (null for admins)."
+            "description": "Any authenticated user. Returns the logged-in admin user (profile is null for admins)."
           },
           "response": []
         },
         {
-          "name": "Update Own Profile",
+          "name": "Update Own Profile (mobile and web)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -311,7 +474,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Juan D. Cruz\",\n  \"contact_number\": \"09179876543\",\n  \"address_area\": \"Zone 2, Tawiran St., Santolan\",\n  \"availability\": \"unavailable\",\n  \"training\": \"Red Cross Basic First Aid (2025), BDRRMC Orientation\",\n  \"skills\": [1, 2]\n}"
+              "raw": "{\n  \"name\": \"Maria Santos\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/me",
@@ -325,12 +488,7 @@
             "description": "Any authenticated user. Updates only the fields sent."
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "Volunteers",
-      "item": [
+        },
         {
           "name": "List Volunteers",
           "request": {
@@ -514,12 +672,7 @@
             "description": "Admin with volunteer_approvals or superadmin. Rejects a pending volunteer (reason is optional) and writes an activity log entry."
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "Admins",
-      "item": [
+        },
         {
           "name": "List Admins",
           "request": {
