@@ -12,51 +12,6 @@ Living changelog tracking every backend update across Phases 1–8 for `esagip-a
 
 ## Phase 2 — Accounts, Roles and Approval
 
-### Update 2.10: Superadmin-Only Admin Management (`GET /api/admins`, `POST /api/admins`, `PUT /api/admins/{id}`)
-*November 28, 2026 — 11:50 PM PHT*
-
-**Brief description:**
-Implemented the final 3 Phase 2 endpoints (`GET /api/admins`, `POST /api/admins`, `PUT /api/admins/{id}`), strictly limited to active `superadmin` accounts via `role:superadmin` middleware, with `activity_logs` IP recording on create and update. All **15 / 15 Phase 2 API endpoints** are now implemented.
-
-**What changed:**
-- Added `StoreAdminRequest`, `UpdateAdminRequest`, `AdminResource`, `AdminController` (`index`, `store`, `update`), routes under `role:superadmin` in `routes/api.php`, and `tests/Feature/AdminManagementTest.php`.
-
-**Verification & Documentation Notes:**
-- PHPUnit: `php artisan test` — all tests passing.
-- **Next step:** Merge PR to `main` (auto-deploy to Render), integrate with Flutter & Next.js, run QA role-access sign-off, and tag `v0.2.0`.
-
----
-
-### Update 2.9: Volunteer Approve & Reject (`POST /api/volunteers/{id}/approve`, `POST /api/volunteers/{id}/reject`)
-*November 28, 2026 — 11:31 PM PHT*
-
-**Brief description:**
-Implemented volunteer approval and rejection endpoints (optional `reason`, pending-only guard, and `activity_logs` recording with IP address).
-
-**What changed:**
-- Added `RejectVolunteerRequest`, `VolunteerController::approve()` and `VolunteerController::reject()`, routes under `permission:volunteer_approvals` in `routes/api.php`, and `tests/Feature/VolunteerApprovalTest.php`.
-
-**Verification & Documentation Notes:**
-- PHPUnit: `php artisan test` — all tests passing.
-- **Next step:** Implement Superadmin-only admin management (`GET /api/admins`, `POST /api/admins`, `PUT /api/admins/{id}`).
-
----
-
-### Update 2.8: Volunteer List, Filters & Summary (`GET /api/volunteers`, `GET /api/volunteers/summary`)
-*November 28, 2026 — 11:18 PM PHT*
-
-**Brief description:**
-Implemented the admin-only volunteer listing endpoint with filtering (`status`, `skill`, `availability`, `address_area`, `search`) and pagination, plus the status summary endpoint. Contact details remain restricted to authorized admins (`volunteer_approvals` or `superadmin`).
-
-**What changed:**
-- Added `ListVolunteersRequest`, `VolunteerResource`, `VolunteerController` (`index`, `summary`), routes under `permission:volunteer_approvals` in `routes/api.php`, and `tests/Feature/VolunteerListTest.php`.
-
-**Verification & Documentation Notes:**
-- PHPUnit: `php artisan test` — all tests passing.
-- **Next step:** Implement `POST /api/volunteers/{id}/approve` and `POST /api/volunteers/{id}/reject`.
-
----
-
 ### Update 2.7: Own Profile (`GET /api/me`, `PUT /api/me`)
 *November 28, 2026 — 9:58 PM PHT*
 
