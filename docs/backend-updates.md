@@ -12,6 +12,22 @@ Living changelog tracking every backend update across Phases 1–8 for `esagip-a
 
 ## Phase 2 — Accounts, Roles and Approval
 
+### Update 2.5: Logout (`POST /api/logout`)
+*November 28, 2026 — 8:59 PM PHT*
+
+**Brief description:**
+Implemented `POST /api/logout` to revoke only the current Sanctum Bearer token used in the request.
+
+**What changed:**
+- Added `AuthController::logout()` in `app/Http/Controllers/AuthController.php`, protected route `POST /api/logout` (`auth:sanctum`, `throttle:api`) in `routes/api.php`, and `tests/Feature/LogoutTest.php`.
+- Verified `200` (revokes only the active token while keeping other device tokens intact) and `401` (missing or invalid token).
+
+**Verification & Documentation Notes:**
+- PHPUnit: `php artisan test` — all tests passing.
+- **Next step:** Implement `GET /api/skills`, `GET /api/me`, and `PUT /api/me`.
+
+---
+
 ### Update 2.4: Admin Portal Login (`POST /api/admin/login`)
 *November 28, 2026 — 8:42 PM PHT*
 

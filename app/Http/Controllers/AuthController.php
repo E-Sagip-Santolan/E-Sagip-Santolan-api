@@ -9,6 +9,7 @@ use App\Models\ActivityLog;
 use App\Models\User;
 use App\Models\VolunteerProfile;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -148,6 +149,19 @@ class AuthController extends Controller
                 'user' => new UserResource($user),
             ],
             'message' => 'Logged in.',
+        ], 200);
+    }
+
+    /**
+     * Revoke only the Sanctum token used in the current request.
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()?->delete();
+
+        return response()->json([
+            'data' => null,
+            'message' => 'Logged out.',
         ], 200);
     }
 }

@@ -223,7 +223,7 @@ flowchart TD
 - ~~Implement `POST /api/register` (volunteer sign-up, 18+, residency, consent, Sanctum token) + PHPUnit tests~~
 - ~~Implement `POST /api/login` (volunteer login, role/active checks, rate limiting, activity log with IP) + PHPUnit tests~~
 - ~~Implement `POST /api/admin/login` (admin/superadmin login, rate limiting, activity log with IP) + PHPUnit tests~~
-- [ ] Implement `POST /api/logout` (revoke current Sanctum token) + PHPUnit tests
+- ~~Implement `POST /api/logout` (revoke current Sanctum token) + PHPUnit tests~~
 - [ ] Implement `GET /api/skills`, `GET /api/me`, and `PUT /api/me` + PHPUnit tests
 - [ ] Implement `GET /api/volunteers` (filters, pagination, admin-only contact details) and `GET /api/volunteers/summary` + PHPUnit tests
 - [ ] Implement `POST /api/volunteers/{id}/approve` and `POST /api/volunteers/{id}/reject` (optional reason, activity log with IP) + PHPUnit tests
