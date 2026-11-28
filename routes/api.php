@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SkillController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,9 @@ Route::get('/health', fn () => response()->json([
     'service' => 'esagip-api',
     'time' => now(),
 ]));
+
+Route::get('/skills', [SkillController::class, 'index'])
+    ->middleware('throttle:api');
 
 Route::post('/register', [AuthController::class, 'register'])
     ->middleware('throttle:register');

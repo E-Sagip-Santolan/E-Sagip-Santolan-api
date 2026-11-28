@@ -12,6 +12,21 @@ Living changelog tracking every backend update across Phases 1–8 for `esagip-a
 
 ## Phase 2 — Accounts, Roles and Approval
 
+### Update 2.6: Public Skills List (`GET /api/skills`)
+*November 28, 2026 — 9:15 PM PHT*
+
+**Brief description:**
+Implemented `GET /api/skills` as a public endpoint so the Flutter mobile registration screen can load available skills before login.
+
+**What changed:**
+- Added `app/Http/Resources/SkillResource.php`, `app/Http/Controllers/SkillController.php`, route `GET /api/skills` (`throttle:api`) in `routes/api.php`, and `tests/Feature/SkillTest.php`.
+
+**Verification & Documentation Notes:**
+- PHPUnit: `php artisan test` — all tests passing.
+- **Next step:** Implement `GET /api/me` and `PUT /api/me`.
+
+---
+
 ### Update 2.5: Logout (`POST /api/logout`)
 *November 28, 2026 — 8:59 PM PHT*
 
