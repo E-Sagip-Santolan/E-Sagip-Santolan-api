@@ -12,6 +12,21 @@ Living changelog tracking every backend update across Phases 1–8 for `esagip-a
 
 ## Phase 2 — Accounts, Roles and Approval
 
+### Update 2.7: Own Profile (`GET /api/me`, `PUT /api/me`)
+*November 28, 2026 — 9:58 PM PHT*
+
+**Brief description:**
+Implemented `GET /api/me` and `PUT /api/me` for volunteers and admins to view and partially update their own profiles while keeping `email`, `role`, `status`, and `is_active` locked.
+
+**What changed:**
+- Added `UpdateProfileRequest`, `MeResource`, `ProfileController` (`show`, `update`), routes `GET /api/me` and `PUT /api/me` in `routes/api.php` (removed unused starter `/api/user` route), and `tests/Feature/ProfileTest.php`.
+
+**Verification & Documentation Notes:**
+- PHPUnit: `php artisan test` — all tests passing.
+- **Next step:** Implement `GET /api/volunteers` (with filters + admin-only contact details) and `GET /api/volunteers/summary`.
+
+---
+
 ### Update 2.6: Public Skills List (`GET /api/skills`)
 *November 28, 2026 — 9:15 PM PHT*
 
