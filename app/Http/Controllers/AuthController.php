@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Models\ActivityLog;
 use App\Models\User;
 use App\Models\VolunteerProfile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -59,5 +62,44 @@ class AuthController extends Controller
             ],
             'message' => 'Registration received. Waiting for admin approval.',
         ], 201);
+    }
+
+    /**
+     * Authenticate a volunteer for the mobile app and log the sign-in with IP.
+     */
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $user = User::where('email', strtolower(trim($data['email'])))->first();
+
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
+            return response()->json(['message' => 'Invalid email or password.'], 401);
+        }
+
+        if (! $user->isVolunteer()) {
+            return response()->json(['message' => 'Please use the admin portal to log in.'], 403);
+        }
+
+        if (! $user->is_active) {
+            return response()->json(['message' => 'This account is disabled.'], 403);
+        }
+
+        $token = $user->createToken('mobile')->plainTextToken;
+
+        ActivityLog::record(
+            $user->id,
+            'login',
+            'auth',
+            'Volunteer signed in.',
+            $request->ip(),
+        );
+
+        return response()->json([
+            'data' => [
+                'token' => $token,
+                'user' => new UserResource($user),
+            ],
+            'message' => 'Logged in.',
+        ], 200);
     }
 }

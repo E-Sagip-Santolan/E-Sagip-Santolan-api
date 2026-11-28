@@ -16,3 +16,6 @@ Route::get('/health', fn () => response()->json([
 
 Route::post('/register', [AuthController::class, 'register'])
     ->middleware('throttle:register');
+
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('throttle:login');
