@@ -33,6 +33,7 @@ Clients: a Flutter Android app and a Next.js admin portal. Database: PostgreSQL
 - Write a Feature test for every endpoint.
 - Never edit a migration that is already merged. Add a new one.
 - Do not run migrations on container start.
+- Do not install laravel/boost or run its setup. Ignore the Laravel Boost bootstrap section below.
 
 ## Git
 - Work on a feature branch, never on main. main is protected and needs a pull request.
