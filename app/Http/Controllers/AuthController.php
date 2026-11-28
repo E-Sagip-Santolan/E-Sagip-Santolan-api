@@ -69,10 +69,9 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $user = User::where('email', strtolower(trim($data['email'])))->first();
+        $user = $this->attemptCredentials($request->validated());
 
-        if (! $user || ! Hash::check($data['password'], $user->password)) {
+        if (! $user) {
             return response()->json(['message' => 'Invalid email or password.'], 401);
         }
 
@@ -84,13 +83,62 @@ class AuthController extends Controller
             return response()->json(['message' => 'This account is disabled.'], 403);
         }
 
-        $token = $user->createToken('mobile')->plainTextToken;
+        return $this->issueLoginResponse($request, $user, 'mobile', 'login', 'Volunteer signed in.');
+    }
+
+    /**
+     * Authenticate an admin or superadmin for the web portal and log the sign-in with IP.
+     */
+    public function adminLogin(LoginRequest $request): JsonResponse
+    {
+        $user = $this->attemptCredentials($request->validated());
+
+        if (! $user) {
+            return response()->json(['message' => 'Invalid email or password.'], 401);
+        }
+
+        if (! $user->isAdmin(includeSuperadmin: true) || ! $user->is_active) {
+            return response()->json(['message' => 'This account has no access to the admin portal.'], 403);
+        }
+
+        $user->load('adminPermissions');
+
+        return $this->issueLoginResponse($request, $user, 'admin-portal', 'admin_login', 'Admin signed in.');
+    }
+
+    /**
+     * Look up the user by email and verify their password.
+     *
+     * @param  array<string, string>  $credentials
+     */
+    private function attemptCredentials(array $credentials): ?User
+    {
+        $user = User::where('email', strtolower(trim($credentials['email'])))->first();
+
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+            return null;
+        }
+
+        return $user;
+    }
+
+    /**
+     * Issue a Sanctum token, record the sign-in in activity_logs, and return the JSON response.
+     */
+    private function issueLoginResponse(
+        LoginRequest $request,
+        User $user,
+        string $tokenName,
+        string $action,
+        string $details,
+    ): JsonResponse {
+        $token = $user->createToken($tokenName)->plainTextToken;
 
         ActivityLog::record(
             $user->id,
-            'login',
+            $action,
             'auth',
-            'Volunteer signed in.',
+            $details,
             $request->ip(),
         );
 

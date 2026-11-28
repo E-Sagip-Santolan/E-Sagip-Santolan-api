@@ -175,9 +175,9 @@ class User extends Authenticatable
         }
 
         if ($this->relationLoaded('adminPermissions')) {
-            return $this->adminPermissions->pluck('permission')->values()->all();
+            return $this->adminPermissions->pluck('permission')->sort()->values()->all();
         }
 
-        return $this->adminPermissions()->pluck('permission')->values()->all();
+        return $this->adminPermissions()->orderBy('permission')->pluck('permission')->values()->all();
     }
 }

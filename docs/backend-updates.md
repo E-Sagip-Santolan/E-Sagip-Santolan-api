@@ -12,6 +12,22 @@ Living changelog tracking every backend update across Phases 1–8 for `esagip-a
 
 ## Phase 2 — Accounts, Roles and Approval
 
+### Update 2.4: Admin Portal Login (`POST /api/admin/login`)
+*November 28, 2026 — 8:42 PM PHT*
+
+**Brief description:**
+Implemented admin and superadmin login (`POST /api/admin/login`) with Sanctum token issuance, role and active-account guards, rate limiting (`throttle:login`), and `activity_logs` recording with IP address.
+
+**What changed:**
+- Added `AuthController::adminLogin()` (with shared credential/token helpers) in `app/Http/Controllers/AuthController.php`, route `POST /api/admin/login` in `routes/api.php`, and `tests/Feature/AdminLoginTest.php`.
+- Verified `200` (active `admin` with assigned permissions + `superadmin` with all 6 permissions + `activity_logs` IP entry), `401` (wrong credentials), `403` (volunteers & disabled admins blocked), `422` (validation), and `429` (rate limit).
+
+**Verification & Documentation Notes:**
+- PHPUnit: `php artisan test` — all tests passing.
+- **Next step:** Implement `POST /api/logout`.
+
+---
+
 ### Update 2.3: Volunteer Login (`POST /api/login`)
 *November 28, 2026 — 8:30 PM PHT*
 

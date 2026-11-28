@@ -19,3 +19,6 @@ Route::post('/register', [AuthController::class, 'register'])
 
 Route::post('/login', [AuthController::class, 'login'])
     ->middleware('throttle:login');
+
+Route::post('/admin/login', [AuthController::class, 'adminLogin'])
+    ->middleware('throttle:login');
