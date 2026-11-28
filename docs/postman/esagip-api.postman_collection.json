@@ -1,0 +1,805 @@
+{
+  "info": {
+    "name": "E-Sagip API (Phase 2)",
+    "description": "Phase 2 REST API collection for E-Sagip (Barangay Santolan), divided into Mobile App and Web Admin Portal folders. Overlapping endpoints are labeled (mobile and web). Uses {{base_url}} and {{token}} variables with dummy data from docs/api.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Mobile App",
+      "description": "Endpoints used by the Flutter Android volunteer app.",
+      "item": [
+        {
+          "name": "Health Check (mobile and web)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Public smoke-test endpoint to verify the API is up."
+          },
+          "response": []
+        },
+        {
+          "name": "List Skills (mobile and web)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/skills",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "skills"
+              ]
+            },
+            "description": "Public. Lists all available skills for registration and profile editing."
+          },
+          "response": []
+        },
+        {
+          "name": "Register Volunteer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.token) {",
+                  "    pm.environment.set('token', json.data.token);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Dela Cruz\",\n  \"email\": \"juan@example.com\",\n  \"password\": \"Password123\",\n  \"password_confirmation\": \"Password123\",\n  \"contact_number\": \"09171234567\",\n  \"address_area\": \"Zone 1, Sgt. de Leon St., Santolan\",\n  \"birthdate\": \"2000-05-14\",\n  \"is_resident\": true,\n  \"availability\": \"available\",\n  \"training\": \"Red Cross Basic First Aid (2025)\",\n  \"skills\": [1, 4, 7],\n  \"consent\": true,\n  \"policy_version\": \"1.0\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "register"
+              ]
+            },
+            "description": "Public. Registers a new volunteer with status 'pending' and saves the returned Sanctum token to {{token}}."
+          },
+          "response": []
+        },
+        {
+          "name": "Volunteer Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.token) {",
+                  "    pm.environment.set('token', json.data.token);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@example.com\",\n  \"password\": \"Password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Public (rate-limited). Volunteers only. Saves the returned Sanctum token to {{token}}."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout (mobile and web)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('token', '');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            },
+            "description": "Any authenticated user. Revokes the current Sanctum token and clears {{token}}."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Own Profile (mobile and web)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "Any authenticated user. Returns the logged-in user and volunteer profile."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Own Profile (mobile and web)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan D. Cruz\",\n  \"contact_number\": \"09179876543\",\n  \"address_area\": \"Zone 2, Tawiran St., Santolan\",\n  \"availability\": \"unavailable\",\n  \"training\": \"Red Cross Basic First Aid (2025), BDRRMC Orientation\",\n  \"skills\": [1, 2]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "Any authenticated user. Updates only the fields sent."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Web Admin Portal",
+      "description": "Endpoints used by the Next.js BDRRMC admin portal.",
+      "item": [
+        {
+          "name": "Health Check (mobile and web)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Public smoke-test endpoint to verify the API is up."
+          },
+          "response": []
+        },
+        {
+          "name": "List Skills (mobile and web)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/skills",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "skills"
+              ]
+            },
+            "description": "Public. Lists all available skills."
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.token) {",
+                  "    pm.environment.set('token', json.data.token);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "login"
+              ]
+            },
+            "description": "Public (rate-limited). Admin and superadmin accounts only. Saves the returned Sanctum token to {{token}}."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout (mobile and web)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.environment.set('token', '');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            },
+            "description": "Any authenticated user. Revokes the current Sanctum token and clears {{token}}."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Own Profile (mobile and web)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "Any authenticated user. Returns the logged-in admin user (profile is null for admins)."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Own Profile (mobile and web)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria Santos\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "Any authenticated user. Updates only the fields sent."
+          },
+          "response": []
+        },
+        {
+          "name": "List Volunteers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/volunteers?status=pending&page=1&per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "volunteers"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "pending, approved, or rejected"
+                },
+                {
+                  "key": "skill",
+                  "value": "1",
+                  "disabled": true,
+                  "description": "Skill ID"
+                },
+                {
+                  "key": "availability",
+                  "value": "available",
+                  "disabled": true,
+                  "description": "available, unavailable, or on_operation"
+                },
+                {
+                  "key": "address_area",
+                  "value": "Zone 1",
+                  "disabled": true,
+                  "description": "Filter by area"
+                },
+                {
+                  "key": "search",
+                  "value": "juan",
+                  "disabled": true,
+                  "description": "Search name, email, or contact_number"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            },
+            "description": "Admin with volunteer_approvals or superadmin. Returns paginated volunteers including contact details."
+          },
+          "response": []
+        },
+        {
+          "name": "Volunteer Summary",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/volunteers/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "volunteers",
+                "summary"
+              ]
+            },
+            "description": "Admin with volunteer_approvals or superadmin. Returns volunteer counts by status."
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Volunteer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/volunteers/12/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "volunteers",
+                "12",
+                "approve"
+              ]
+            },
+            "description": "Admin with volunteer_approvals or superadmin. Approves a pending volunteer and writes an activity log entry."
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Volunteer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Address is outside Barangay Santolan.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/volunteers/12/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "volunteers",
+                "12",
+                "reject"
+              ]
+            },
+            "description": "Admin with volunteer_approvals or superadmin. Rejects a pending volunteer (reason is optional) and writes an activity log entry."
+          },
+          "response": []
+        },
+        {
+          "name": "List Admins",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admins?page=1&per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admins"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            },
+            "description": "Superadmin only. Lists admin and superadmin accounts."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Admin",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pedro Reyes\",\n  \"email\": \"pedro@example.com\",\n  \"password\": \"TempPassword123\",\n  \"role\": \"admin\",\n  \"permissions\": [\"volunteer_approvals\", \"operation_management\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admins",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admins"
+              ]
+            },
+            "description": "Superadmin only. Creates a new admin account and writes an activity log entry."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Admin",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pedro R. Reyes\",\n  \"permissions\": [\"volunteer_approvals\", \"operation_management\", \"attendance_confirmation\"],\n  \"is_active\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admins/5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admins",
+                "5"
+              ]
+            },
+            "description": "Superadmin only. Updates an admin account's name, role, permissions, or active state and writes an activity log entry."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
