@@ -227,7 +227,7 @@ flowchart TD
 - ~~Implement `GET /api/skills`, `GET /api/me`, and `PUT /api/me` + PHPUnit tests~~
 - ~~Implement `GET /api/volunteers` (filters, pagination, admin-only contact details) and `GET /api/volunteers/summary` + PHPUnit tests~~
 - ~~Implement `POST /api/volunteers/{id}/approve` and `POST /api/volunteers/{id}/reject` (optional reason, activity log with IP) + PHPUnit tests~~
-- [ ] Implement `GET /api/admins`, `POST /api/admins`, and `PUT /api/admins/{id}` (Superadmin-only, activity log with IP) + PHPUnit tests
+- ~~Implement `GET /api/admins`, `POST /api/admins`, and `PUT /api/admins/{id}` (Superadmin-only, activity log with IP) + PHPUnit tests~~
 - [ ] Complete Phase 2 integration (Flutter + Next.js), QA role-access sign-off, and tag `v0.2.0`
 
 ### Phase 3: Operations and Sign-Up

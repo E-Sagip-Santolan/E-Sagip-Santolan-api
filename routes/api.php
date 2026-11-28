@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SkillController;
@@ -34,5 +35,11 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/volunteers/summary', [VolunteerController::class, 'summary']);
         Route::post('/volunteers/{id}/approve', [VolunteerController::class, 'approve']);
         Route::post('/volunteers/{id}/reject', [VolunteerController::class, 'reject']);
+    });
+
+    Route::middleware('role:superadmin')->group(function () {
+        Route::get('/admins', [AdminController::class, 'index']);
+        Route::post('/admins', [AdminController::class, 'store']);
+        Route::put('/admins/{id}', [AdminController::class, 'update']);
     });
 });

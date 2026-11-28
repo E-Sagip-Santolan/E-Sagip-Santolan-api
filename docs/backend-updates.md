@@ -12,6 +12,21 @@ Living changelog tracking every backend update across Phases 1–8 for `esagip-a
 
 ## Phase 2 — Accounts, Roles and Approval
 
+### Update 2.10: Superadmin-Only Admin Management (`GET /api/admins`, `POST /api/admins`, `PUT /api/admins/{id}`)
+*November 28, 2026 — 11:50 PM PHT*
+
+**Brief description:**
+Implemented the final 3 Phase 2 endpoints (`GET /api/admins`, `POST /api/admins`, `PUT /api/admins/{id}`), strictly limited to active `superadmin` accounts via `role:superadmin` middleware, with `activity_logs` IP recording on create and update. All **15 / 15 Phase 2 API endpoints** are now implemented.
+
+**What changed:**
+- Added `StoreAdminRequest`, `UpdateAdminRequest`, `AdminResource`, `AdminController` (`index`, `store`, `update`), routes under `role:superadmin` in `routes/api.php`, and `tests/Feature/AdminManagementTest.php`.
+
+**Verification & Documentation Notes:**
+- PHPUnit: `php artisan test` — all tests passing.
+- **Next step:** Merge PR to `main` (auto-deploy to Render), integrate with Flutter & Next.js, run QA role-access sign-off, and tag `v0.2.0`.
+
+---
+
 ### Update 2.9: Volunteer Approve & Reject (`POST /api/volunteers/{id}/approve`, `POST /api/volunteers/{id}/reject`)
 *November 28, 2026 — 11:31 PM PHT*
 
